@@ -45,6 +45,7 @@ async function showDetails(imdbID) {
 }
 
 async function fetchApiData(inputElement) {
+     movieDetailsContainer.innerHTML = "";
   //Validate input
   const inputVal = inputElement.value.trim(); // get fresh value every click
 
@@ -65,6 +66,7 @@ async function fetchApiData(inputElement) {
     }
 
     const data = await response.json();
+    inputElement.value="";
     displayData(data);
   } catch (error) {
     console.log(error);
