@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Gallery</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="gallery">
+
+  <div class="main-image-container">
+    <button class="nav-btn left">&#10094; Prev</button>
+    
+    <img id="mainImage" src="" alt="Main Image">
+    
+    <button class="nav-btn right">Next &#10095;</button>
+  </div>
+
+  <!-- Empty container -->
+  <div class="thumbnail-container" id="thumbContainer"></div>
+
+</div>
+<script>
+const mainImage = document.getElementById("mainImage");
+const container = document.getElementById("thumbContainer");
+
+let images = [];
+let currentIndex = 0;
+
+// Fetch images
+async function fetchImages() {
+  const res = await fetch("https://picsum.photos/v2/list?page=1&limit=10");
+  const data = await res.json();
+
+  images = data;
+  renderThumbnails();
+  updateMainImage(0);
+}
+
+function renderThumbnails() {
+  container.innerHTML = "";
+
+  images.forEach((img, index) => {
+    const thumb = document.createElement("img");
+
+    // small thumbnail
+    thumb.src = `https://picsum.photos/id/${img.id}/200/120`;
+    thumb.classList.add("thumb");
+
+    thumb.addEventListener("click", () => {
+      currentIndex = index;
+      updateMainImage(index);
+    });
+
+    container.appendChild(thumb);
+  });
+}
+
+function updateMainImage(index) {
+  mainImage.src = `https://picsum.photos/id/${images[index].id}/900/500`;
+
+  // Active highlight
+  document.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".thumb")[index].classList.add("active");
+}
+
+// Navigation
+document.querySelector(".left").addEventListener("click", () => {
+  currentIndex = (currentIndex - 1 + images.length) % images.length;
+  updateMainImage(currentIndex);
+});
+
+document.querySelector(".right").addEventListener("click", () => {
+  currentIndex = (currentIndex + 1) % images.length;
+  updateMainImage(currentIndex);
+});
+
+// Init
+fetchImages();
+</script>
+</body>
+</html>
